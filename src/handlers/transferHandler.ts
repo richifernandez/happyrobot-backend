@@ -18,35 +18,29 @@ const service = new TransferService(new SalesRepoMock());
  * }
  */
 export async function transferHandler(req: Request, res: Response) {
-  const b = (req.body ?? {}) as {
-    callId?: string;
-    toNumber?: string;
-    load_id?: string;
-    final_rate?: number;
-    carrier_mc?: string;
-    carrier_name?: string;
-    notes?: string;
-  };
-
-  if (!b.callId || !b.toNumber || !b.load_id || typeof b.final_rate !== 'number') {
-    return res.status(400).json({
-      error: 'callId, toNumber, load_id and final_rate are required'
+    const raw = (req.body ?? {}) as Record<string, any>;
+  
+    const final_rate = raw.final_rate !== undefined ? Number(raw.final_rate) : NaN;
+  
+    if (!raw.callId || !raw.toNumber || !raw.load_id || Number.isNaN(final_rate)) {
+      return res.status(400).json({
+        error: 'callId, toNumber, load_id and final_rate are required'
+      });
+    }
+  
+    const result = await service.exec({
+      callId: raw.callId,
+      toNumber: raw.toNumber,
+      load_id: raw.load_id,
+      final_rate, // ya como number
+      carrier_mc: raw.carrier_mc,
+      carrier_name: raw.carrier_name,
+      notes: raw.notes
     });
+  
+    if (!result.success) {
+      return res.status(502).json(result);
+    }
+  
+    return res.json(result);
   }
-
-  const result = await service.exec({
-    callId: b.callId,
-    toNumber: b.toNumber,
-    load_id: b.load_id,
-    final_rate: b.final_rate,
-    carrier_mc: b.carrier_mc,
-    carrier_name: b.carrier_name,
-    notes: b.notes
-  });
-
-  if (!result.success) {
-    return res.status(502).json(result); // bad gateway simulado si falla el “bridge”
-  }
-
-  return res.json(result);
-}
