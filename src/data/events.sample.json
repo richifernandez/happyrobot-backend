@@ -1,0 +1,29 @@
+[
+    {
+      "callId": "hr-001",
+      "timestamp": "2025-08-20T10:05:00Z",
+      "mcNumber": "123456",
+      "step": "final",
+      "outcome": "BOOKED",
+      "sentiment": "POSITIVE",
+      "selected_load": {
+        "load_id": "L001",
+        "final_rate": 1650,
+        "pickup_datetime": "2025-08-21T09:00:00Z",
+        "delivery_datetime": "2025-08-22T18:00:00Z"
+      },
+      "negotiation": { "rounds": 2 },
+      "transcript": "Agreed at 1650 USD"
+    },
+    {
+      "callId": "hr-002",
+      "timestamp": "2025-08-19T14:30:00Z",
+      "mcNumber": "654321",
+      "step": "final",
+      "outcome": "NO_AGREEMENT",
+      "sentiment": "NEGATIVE",
+      "selected_load": null,
+      "negotiation": { "rounds": 3 },
+      "transcript": "Carrier declined the offer"
+    }
+  ]

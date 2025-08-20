@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Inbound Carrier Metrics</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;margin:20px;background:#0b1020;color:#eef}
+    .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    .card{background:#151b34;padding:16px;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,.25)}
+    .title{font-size:20px;margin:0 0 8px 0}
+    .value{font-size:28px;margin:4px 0 0 0}
+    table{width:100%;border-collapse:collapse;margin-top:16px}
+    th,td{border-bottom:1px solid #2a335c;padding:8px;text-align:left;font-size:14px}
+    th{color:#9fb2ff}
+    .muted{color:#9fb2ff;font-size:12px}
+    .row{display:flex;gap:16px;align-items:center;justify-content:space-between;margin:18px 0}
+    .pill{display:inline-block;background:#233060;color:#cfe0ff;border-radius:999px;padding:4px 10px;font-size:12px;margin-right:6px}
+    a{color:#9fb2ff}
+  </style>
+</head>
+<body>
+  <h1>Inbound Carrier Metrics</h1>
+  <div class="grid">
+    <div class="card"><div class="title">Total calls</div><div id="total" class="value">—</div></div>
+    <div class="card"><div class="title">Booking rate</div><div id="booking" class="value">—%</div></div>
+    <div class="card"><div class="title">Avg rounds</div><div id="rounds" class="value">—</div></div>
+    <div class="card">
+      <div class="title">Outcomes</div>
+      <div id="outcomes" class="muted">—</div>
+    </div>
+  </div>
+
+  <div class="row">
+    <h2>Last calls</h2>
+    <div class="muted">refreshes every 10s</div>
+  </div>
+
+  <div class="card">
+    <table id="last">
+      <thead>
+        <tr><th>Call ID</th><th>Outcome</th><th>Sentiment</th><th>Load</th><th>Final rate</th><th>When</th><th>MC</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    // Si /metrics está protegido con Bearer, pon el token aquí:
+    const TOKEN = 'test-secret'; // o '' si lo dejas público
+
+    async function fetchMetrics() {
+      const headers = TOKEN ? { Authorization: `Bearer ${TOKEN}` } : {};
+      const r = await fetch('/metrics', { headers });
+      if (!r.ok) throw new Error('metrics error ' + r.status);
+      return r.json();
+    }
+    function fmtMoney(n){ return (n ?? '') === '' ? '—' : `$${Number(n).toLocaleString()}`; }
+    function render(m) {
+      document.getElementById('total').textContent = m.calls_total ?? 0;
+      document.getElementById('booking').textContent = (m.booking_rate ?? 0) + '%';
+      document.getElementById('rounds').textContent = m.avg_rounds ?? 0;
+
+      const by = m.by_outcome || {};
+      document.getElementById('outcomes').innerHTML = Object.keys(by)
+        .filter(k => by[k] > 0)
+        .map(k => `<span class="pill">${k}: ${by[k]}</span>`).join(' ') || '—';
+
+      const tbody = document.querySelector('#last tbody');
+      tbody.innerHTML = '';
+      (m.last_calls || []).forEach(r => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${r.callId}</td>
+          <td>${r.outcome}</td>
+          <td>${r.sentiment ?? '—'}</td>
+          <td>${r.load_id ?? '—'}</td>
+          <td>${fmtMoney(r.final_rate)}</td>
+          <td>${new Date(r.ts).toLocaleString()}</td>
+          <td>${r.mcNumber ?? '—'}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+    async function loop() {
+      try { const m = await fetchMetrics(); render(m); }
+      catch (e) { console.error(e); }
+      setTimeout(loop, 10000);
+    }
+    loop();
+  </script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+[
+    {
+      "load_id": "L001",
+      "origin": "Madrid, ES",
+      "destination": "Barcelona, ES",
+      "pickup_datetime": "2025-08-21T08:00:00Z",
+      "delivery_datetime": "2025-08-21T18:00:00Z",
+      "equipment_type": "dry_van",
+      "loadboard_rate": 950,
+      "miles": 390,
+      "notes": "No ADR",
+      "weight": 12000,
+      "commodity_type": "Retail",
+      "num_of_pieces": 26
+    },
+    {
+      "load_id": "L002",
+      "origin": "Valencia, ES",
+      "destination": "Madrid, ES",
+      "pickup_datetime": "2025-08-21T09:00:00Z",
+      "delivery_datetime": "2025-08-21T20:00:00Z",
+      "equipment_type": "reefer",
+      "loadboard_rate": 1100,
+      "miles": 225,
+      "notes": "Temp 4C",
+      "weight": 10000,
+      "commodity_type": "Produce",
+      "num_of_pieces": 18
+    },
+    {
+      "load_id": "L003",
+      "origin": "Sevilla, ES",
+      "destination": "Lisboa, PT",
+      "pickup_datetime": "2025-08-23T06:00:00Z",
+      "delivery_datetime": "2025-08-23T14:00:00Z",
+      "equipment_type": "dry_van",
+      "loadboard_rate": 1400,
+      "miles": 280,
+      "notes": "Same-day",
+      "weight": 8000,
+      "commodity_type": "General",
+      "num_of_pieces": 10
+    }
+  ]
