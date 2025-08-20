@@ -58,19 +58,30 @@ export type NegotiationDecision =
   export type Outcome = 'BOOKED' | 'NO_AGREEMENT' | 'NOT_ELIGIBLE' | 'NO_LOADS';
 export type Sentiment = 'POSITIVE' | 'NEUTRAL' | 'NEGATIVE';
 
+
+
 export interface FinalEvent {
-  callId: string;
-  timestamp: string; // ISO
-  mcNumber: string;
-  step: 'final';
-  outcome: Outcome;
-  sentiment?: Sentiment;
-  selected_load?: {
-    load_id: string;
-    final_rate?: number;          // USD
-    pickup_datetime?: string;     // ISO
-    delivery_datetime?: string;   // ISO
-  };
-  negotiation?: { rounds?: number };
-  transcript?: string;
-}
+    callId: string;
+    timestamp: string; // ISO
+    mcNumber: string;
+    step: 'final';
+    outcome: Outcome;
+    sentiment?: Sentiment;
+  
+    selected_load?: {
+      load_id: string;
+      final_rate?: number;          // USD
+      pickup_datetime?: string;     // ISO
+      delivery_datetime?: string;   // ISO
+    };
+  
+    negotiation?: { rounds?: number };
+    transcript?: string;
+  
+    notes?: string;
+    special_requirements?: string;
+    contact?: {
+      name?: string;
+      email?: string;
+    };
+  }

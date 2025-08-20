@@ -13,7 +13,10 @@
         "delivery_datetime": "2025-08-22T18:00:00Z"
       },
       "negotiation": { "rounds": 2 },
-      "transcript": "Agreed at 1650 USD"
+      "transcript": "Agreed at 1650 USD",
+      "notes": "Live unload. Please email rate con.",
+      "special_requirements": "Driver must have TWIC",
+      "contact": { "name": "John Smith", "email": "dispatch@carrier.com" }
     },
     {
       "callId": "hr-002",
