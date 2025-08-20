@@ -1,6 +1,5 @@
 import { CarrierRecord } from '../domain/models';
 
-// Mock sencillo; amplíalo o sustitúyelo por una llamada real cuando quieras
 const carriers: CarrierRecord[] = [
   { mcNumber: '123456', companyName: 'Acme Logistics', operatingStatus: 'ACTIVE' },
   { mcNumber: '654321', companyName: 'Bad Carrier Inc.', operatingStatus: 'OUT_OF_SERVICE' },

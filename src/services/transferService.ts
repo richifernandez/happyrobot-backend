@@ -5,7 +5,6 @@ export class TransferService {
   constructor(private repo: SalesRepo) {}
 
   async exec(payload: TransferCall): Promise<TransferResult> {
-    // Reglas mínimas de negocio
     if (payload.final_rate <= 0) {
       return { success: false, transfer_id: 'bad-rate', connected: false };
     }

@@ -13,7 +13,7 @@ export interface Load {
   pickup_datetime: string;      // ISO
   delivery_datetime: string;    // ISO
   equipment_type: EquipmentType;
-  loadboard_rate: number;       // USD (no céntimos)
+  loadboard_rate: number;       
   miles?: number;
   notes?: string;
   weight?: number;
@@ -50,8 +50,8 @@ export type NegotiationDecision =
   
   export interface TransferResult {
     success: boolean;
-    transfer_id: string;     // id simulado del puente
-    connected: boolean;      // mock: true si “conectó”
+    transfer_id: string;     
+    connected: boolean;      
   }
 
 

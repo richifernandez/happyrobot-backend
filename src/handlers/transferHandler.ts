@@ -32,7 +32,7 @@ export async function transferHandler(req: Request, res: Response) {
       callId: raw.callId,
       toNumber: raw.toNumber,
       load_id: raw.load_id,
-      final_rate, // ya como number
+      final_rate, 
       carrier_mc: raw.carrier_mc,
       carrier_name: raw.carrier_name,
       notes: raw.notes

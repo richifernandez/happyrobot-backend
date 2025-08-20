@@ -8,7 +8,6 @@ const service = new LogFinalEventService(new EventsRepository());
 export async function logFinalEventHandler(req: Request, res: Response) {
   const b = (req.body ?? {}) as any;
 
-  // Defaults para evitar errores
   const callId = String(b.callId || randomUUID());
   const timestamp =
     typeof b.timestamp === 'string' && b.timestamp
@@ -60,7 +59,7 @@ export async function logFinalEventHandler(req: Request, res: Response) {
           }
         : undefined
     });
-    
+
     return res.status(200).json({
       status: 'ok',
       message: 'Final event logged successfully',

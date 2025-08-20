@@ -15,10 +15,8 @@ import { authMiddleware } from './middleware/auth';
 const app = express();
 app.use(express.json());
 
-// Health (sin auth por ahora)
 app.get('/health', healthHandler);
 
-// Rutas protegidas
 app.post('/verify-carrier', authMiddleware, verifyCarrierHandler);
 app.post('/loads/search', authMiddleware, searchLoadsHandler);
 app.post('/negotiate', authMiddleware, negotiateHandler);
@@ -28,7 +26,6 @@ app.get('/metrics', authMiddleware, metricsHandler);
 app.use('/dashboard', express.static(path.resolve(process.cwd(), 'public')));
 
 
-// Arranque
 const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
 app.listen(PORT, () => {
   console.log(`API listening on http://0.0.0.0:${PORT}`);
