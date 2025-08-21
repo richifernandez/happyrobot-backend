@@ -1,9 +1,11 @@
+// src/repositories/carrierRepository.ts
 import { CarrierRecord } from '../domain/models';
 
 const FMC_BASE = 'https://mobile.fmcsa.dot.gov/qc/services/carriers';
-const FMC_API_KEY = process.env.FMC_API_KEY; 
+const FMC_API_KEY = process.env.FMC_API_KEY; // Solo desde entorno
 
-function normalizeDot(input: string): string | null {
+// Normaliza un MC: acepta "843418" o "MC843418" -> "843418" (solo dígitos)
+function normalizeMc(input: string): string | null {
   if (!input) return null;
   const cleaned = input.toUpperCase().trim().replace(/^MC/, '');
   return /^\d+$/.test(cleaned) ? cleaned : null;
@@ -16,32 +18,31 @@ async function fetchJSON(url: string) {
 }
 
 export class CarrierRepository {
-  async findByMcNumber(mcNumber: string): Promise<CarrierRecord | null> {
-    const dot = normalizeDot(mcNumber);
-    if (!dot || !FMC_API_KEY) return null; // sin key no hay request
 
-    const url = `${FMC_BASE}/${encodeURIComponent(dot)}/authority?webKey=${encodeURIComponent(FMC_API_KEY)}`;
+  async findByMcNumber(mcNumber: string): Promise<CarrierRecord | null> {
+    const mc = normalizeMc(mcNumber);
+    if (!mc || !FMC_API_KEY) return null;
+
+    const url = `${FMC_BASE}/docket-number/${encodeURIComponent(mc)}?webKey=${encodeURIComponent(FMC_API_KEY)}`;
     const data = await fetchJSON(url);
 
-    const authority = Array.isArray(data?.content)
-      ? data.content[0]?.carrierAuthority
-      : data?.content?.carrierAuthority ?? null;
+    // Formatos observados: { content: [ { carrier: {...} } ] } ó { content: [] }
+    const row = Array.isArray(data?.content) ? data.content[0] : null;
+    const carrier = row?.carrier;
+    if (!carrier) return null;
 
-    if (!authority) return null;
+    const allowedToOperate = String(carrier.allowedToOperate || '').toUpperCase(); // 'Y'/'N'
+    const statusCode = String(carrier.statusCode || '').toUpperCase();            // 'A','I',...
+    const legalName = carrier.legalName ?? '';
 
-    const authorizedForProperty =
-      String(authority.authorizedForProperty || '').toUpperCase() === 'Y';
-    const commonActive =
-      String(authority.commonAuthorityStatus || '').toUpperCase() === 'A';
-    const contractActive =
-      String(authority.contractAuthorityStatus || '').toUpperCase() === 'A';
+    const eligible = allowedToOperate === 'Y' && statusCode === 'A';
 
-    const isActive = authorizedForProperty && (commonActive || contractActive);
-
-    return {
-      mcNumber: dot,
-      companyName: '',
-      operatingStatus: isActive ? 'ACTIVE' : 'OUT_OF_SERVICE',
+    const record: CarrierRecord = {
+      mcNumber: mc,                // mantenemos el nombre del campo tal cual lo espera tu handler
+      companyName: legalName || '',// si no viene, cadena vacía
+      operatingStatus: eligible ? 'ACTIVE' : 'OUT_OF_SERVICE',
     };
+
+    return record;
   }
 }
